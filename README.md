@@ -15,14 +15,14 @@ So far implemented:
 
   -can take a table of predefined movement to execute one after another
   
-    -will check beforehand, if you have enough fuel to execute the movement
-    
-    -you can calculate the amount of movements(and thus fuel) needed for a given movement table
-    -move in any direction a desired amount.
-    
-    -you can supply a custom function that will be executed between every ste the turtle does
-    
-      -can be used to dig a tunnel for example
+  -will check beforehand, if you have enough fuel to execute the movement
+
+  -you can calculate the amount of movements(and thus fuel) needed for a given movement table
+  -move in any direction a desired amount.
+
+  -you can supply a custom function that will be executed between every step the turtle does
+
+  -can be used to dig a tunnel for example
       
 -class for farming with the turtle (in development!)
 
