@@ -24,10 +24,12 @@ So far implemented:
 
   -can be used to dig a tunnel for example
       
--class for farming with the turtle (in development!)
+-class for farming with the turtle
 
   -give a table of movements to walk to the field
   
   -set the heigth and width of the field
+  
+  -determine the size of the farm by supplieng its dimension and the turtle will act accordingly
   
   -a post movement action, to move from the field after farming to another location
