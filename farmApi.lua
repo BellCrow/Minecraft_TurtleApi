@@ -48,32 +48,69 @@ end
 
 function FarmHandler:bool_DoRun()
     if (not self:bool_HasEnoughFuelForRun()) then
+        print("Error: Not enough fuel to farm")
         return false
+    end
+    if(not self:bool_HasEnoughSeedlings())then
+        print("Error: Not enough seedlings to farm")
+        return false;
     end
     moveResult = self.obj_turtleMoveApi:int_ExecuteMoveTable(self.table_moveToFarmList)
     if moveResult ~= 0 then
         print("Move to farm failed:")
         print(self.obj_turtleMoveApi:ConvertExecuteMovelistReturnCodeToString(moveResult))
+        return false
     end
     --we assume, now that we are in front the farm and the
     --next forward step will move us onto the first field of the field
-    return self:bool_FarmField()
+    if(not self:bool_FarmField()) then
+        print("Error working the field")
+        return false
+    end
+
+    moveResult = self.obj_turtleMoveApi:int_ExecuteMoveTable(self.table_moveFromFarmList)
+    if moveResult ~= 0 then
+        print("Move from farm failed:")
+        print(self.obj_turtleMoveApi:ConvertExecuteMovelistReturnCodeToString(moveResult))
+        return false
+    end
+    return true
+end
+
+function FarmHandler:bool_HasEnoughSeedlings()
+    return self:int_GetSeedlingCount() >= self:int_GetNeededSeedlings()
+end
+
+function FarmHandler:int_GetSeedlingCount()
+    seedCount = 0
+    for index,seedSlot in ipairs(self.table_seedSlots) do
+        seedCount = seedCount + turtle.getItemCount(seedSlot)
+    end
+    return seedCount
+end
+
+function FarmHandler:int_GetNeededSeedlings()
+    return self.int_farmHeight * self.int_farmWidth
+end
+
+function FarmHandler:bool_FarmSingleColumn()
+    return self.obj_turtleMoveApi:bool_MoveForward(self.int_farmHeight - 1,MoveFunction,self)
 end
 
 function FarmHandler:bool_FarmField()
     bool_turnRight = true
     --just to move onto the field
-    self.obj_turtleMoveApi:bool_MoveForward(1)
+    self.obj_turtleMoveApi:bool_MoveUp(1)
+    self.obj_turtleMoveApi:bool_MoveForward(1,MoveFunction,self)
 
     for i = 0, self.int_farmWidth - 1 do
-        if (not self.obj_turtleMoveApi:bool_MoveForward(self.int_farmHeight - 1, nil)) then
+        if (not  self:bool_FarmSingleColumn()) then
             return false
         end
         --transition to the next column
         if (i < self.int_farmWidth - 1) then
             if (bool_turnRight) then
                 if (not self:bool_RightColumnTransistion()) then
-                    print("FALSE")
                     return false
                 end
             else
@@ -95,6 +132,13 @@ function FarmHandler:bool_FarmField()
     self.obj_turtleMoveApi:bool_TurnLeft(1,nil)
     self.obj_turtleMoveApi:bool_MoveForward(1)
     self.obj_turtleMoveApi:bool_TurnLeft(2,nil)
+    self.obj_turtleMoveApi:bool_MoveDown(1,nil)
+    return true
+end
+
+--this function is a workaround for calling a method from a single func ptr
+function MoveFunction(obj_farmApiInstance)
+    obj_farmApiInstance:bool_FarmSingleField();
 end
 
 function FarmHandler:bool_FarmSingleField()
@@ -103,16 +147,29 @@ function FarmHandler:bool_FarmSingleField()
         return false
     end
 
-    turtle.digDown()
     selectedSlot = turtle.getSelectedSlot()
+
+    --we try 5 times to place a new seed
+    --after that we just assume that all of our struggle would be in vain 
     turtle.select(seedSlot)
-    turtle.placeDown()
+    for i=0,4 do
+        placeSeedSucces = true
+        opResult = turtle.digDown()
+        placeSeedSucces = placeSeedSucces and opResult
+        opResult = turtle.placeDown()
+        placeSeedSucces = placeSeedSucces and opResult
+        if(placeSeedSucces)then
+            break
+        end
+    end
+    
     turtle.select(selectedSlot)
+    return placeSeedSucces
 end
 
 function FarmHandler:int_GetNextValidSeedSlot()
     for index, slotNum in ipairs(self.table_seedSlots) do
-        if (turtle.getItemCount(slotNum) > 2) then
+        if (turtle.getItemCount(slotNum) > 0) then
             return slotNum
         end
     end
@@ -123,7 +180,7 @@ function FarmHandler:bool_RightColumnTransistion()
     if (not self.obj_turtleMoveApi:bool_TurnRight(1, nil)) then
         return false
     end
-    if (not self.obj_turtleMoveApi:bool_MoveForward(1, nil)) then
+    if (not self.obj_turtleMoveApi:bool_MoveForward(1, MoveFunction,self)) then
         return false
     end
     if (not self.obj_turtleMoveApi:bool_TurnRight(1, nil)) then
@@ -136,7 +193,7 @@ function FarmHandler:bool_LeftColumnTransistion()
     if (not self.obj_turtleMoveApi:bool_TurnLeft(1, nil)) then
         return false
     end
-    if (not self.obj_turtleMoveApi:bool_MoveForward(1, nil)) then
+    if (not self.obj_turtleMoveApi:bool_MoveForward(1, MoveFunction,self)) then
         return false
     end
     if (not self.obj_turtleMoveApi:bool_TurnLeft(1, nil)) then

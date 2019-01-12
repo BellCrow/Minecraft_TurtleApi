@@ -129,58 +129,46 @@ end
 
 --the stepfunction will be executed after each step.
 --ergo if you step 4 times forward, the function will be executed 4 times
-function MoveHandler:bool_MoveForward(int_stepCount, func_stepFunction)
-    return self:bool_ApplyMoveFunc(int_stepCount, turtle.forward, func_stepFunction)
+function MoveHandler:bool_MoveForward(int_stepCount, func_stepFunction, var_funcArg)
+    return self:bool_ApplyMoveFunc(int_stepCount, turtle.forward, func_stepFunction,var_funcArg)
 end
 
-function MoveHandler:bool_MoveUp(int_stepCount, func_stepFunction)
-    return self:bool_ApplyMoveFunc(int_stepCount, turtle.up, func_stepFunction)
+function MoveHandler:bool_MoveUp(int_stepCount, func_stepFunction, var_funcArg)
+    return self:bool_ApplyMoveFunc(int_stepCount, turtle.up, func_stepFunction,var_funcArg)
 end
 
-function MoveHandler:bool_MoveDown(int_stepCount, func_stepFunction)
-    return self:bool_ApplyMoveFunc(int_stepCount, turtle.down, func_stepFunction)
+function MoveHandler:bool_MoveDown(int_stepCount, func_stepFunction, var_funcArg)
+    return self:bool_ApplyMoveFunc(int_stepCount, turtle.down, func_stepFunction,var_funcArg)
 end
 
-function MoveHandler:bool_MoveBack(int_stepCount, func_stepFunction)
-    return self:bool_ApplyMoveFunc(int_stepCount, turtle.back, func_stepFunction)
+function MoveHandler:bool_MoveBack(int_stepCount, func_stepFunction, var_funcArg)
+    return self:bool_ApplyMoveFunc(int_stepCount, turtle.back, func_stepFunction,var_funcArg)
 end
 
-function MoveHandler:bool_StrafeLeft(int_stepCount, func_stepFunction)
+function MoveHandler:bool_StrafeLeft(int_stepCount, func_stepFunction, var_funcArg)
     turtle.turnLeft()
-    success = self:bool_ApplyMoveFunc(int_stepCount, turtle.forward, func_stepFunction)
+    success = self:bool_ApplyMoveFunc(int_stepCount, turtle.forward, func_stepFunction,var_funcArg)
     turtle.turnRight()
     return success
 end
 
-function MoveHandler:bool_StrafeRight(int_stepCount, func_stepFunction)
+function MoveHandler:bool_StrafeRight(int_stepCount, func_stepFunction, var_funcArg)
     turtle.turnRight()
-    success = self:bool_ApplyMoveFunc(int_stepCount, turtle.forward, func_stepFunction)
+    success = self:bool_ApplyMoveFunc(int_stepCount, turtle.forward, func_stepFunction,var_funcArg)
     turtle.turnLeft()
 
     return success
 end
 
-function MoveHandler:bool_TurnLeft(int_stepCount, func_stepFunction)
-    for i = 0, int_stepCount - 1 do
-        turtle.turnLeft()
-        
-        if(func_stepFunction ~= nil) then
-            func_stepFunction()
-        end
-        
-    end
-    return true
+function MoveHandler:bool_TurnLeft(int_stepCount, func_stepFunction, var_funcArg)
+
+    success = self:bool_ApplyMoveFunc(int_stepCount, turtle.turnLeft, func_stepFunction,var_funcArg)
+    return success
 end
 
-function MoveHandler:bool_TurnRight(int_stepCount, func_stepFunction)
-    for i = 0, int_stepCount - 1 do
-        turtle.turnRight()
-
-        if(func_stepFunction ~= nil) then
-            func_stepFunction()
-        end
-    end
-    return true
+function MoveHandler:bool_TurnRight(int_stepCount, func_stepFunction, var_funcArg)
+    success = self:bool_ApplyMoveFunc(int_stepCount, turtle.turnRight, func_stepFunction,var_funcArg)
+    return success
 end
 
 --private api
@@ -218,7 +206,7 @@ function MoveHandler:bool_ExcuteList(table_moveList)
     end
 end
 
-function MoveHandler:bool_ApplyMoveFunc(int_repeatCounter, func_moveFunc, func_stepFunc)
+function MoveHandler:bool_ApplyMoveFunc(int_repeatCounter, func_moveFunc, func_stepFunc, var_funcArg)
     if (not self.obj_fuelHandlerInstance:bool_refuelOnDemand()) then
         return false
     end
@@ -231,7 +219,8 @@ function MoveHandler:bool_ApplyMoveFunc(int_repeatCounter, func_moveFunc, func_s
         end
 
         if (func_stepFunc ~= nil) then
-            func_stepFunc()
+            --even if the function has no arguments or nil is supplied as arg, this call will still work
+            func_stepFunc(var_funcArg)
         end
     end
     return true

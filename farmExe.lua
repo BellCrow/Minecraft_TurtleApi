@@ -3,16 +3,22 @@ os.loadAPI("turtleMoveApi.lua")
 os.loadAPI("farmApi.lua")
 
 fuelSlots = {15,16}
-seedSlots = {1,2}
+seedSlots = {1,2,3,4,5}
 fuelHelper = fuelApi.FuelHandler:new(fuelSlots)
 
 turtleMover = turtleMoveApi.MoveHandler:new(fuelHelper)
 
-moveList = {}
-table.insert(moveList,{f = 4})
-table.insert(moveList,{l = 1})
-table.insert(moveList,{f = 4})
+moveToFarmList = {}
+table.insert(moveToFarmList,{f = 4})
+table.insert(moveToFarmList,{l = 1})
+table.insert(moveToFarmList,{f = 4})
 
-farmHandler = farmApi.FarmHandler:new(turtleMover,moveList,moveList,3,6,seedSlots)
+moveFromFarmList = {}
+table.insert(moveFromFarmList,{b = 4})
+table.insert(moveFromFarmList,{r = 1})
+table.insert(moveFromFarmList,{b = 4})
+
+farmHandler = farmApi.FarmHandler:new(turtleMover,moveToFarmList,moveFromFarmList,20,10,seedSlots)
 
 print(farmHandler:bool_DoRun())
+
