@@ -160,7 +160,11 @@ end
 function FarmHandler:bool_FarmSingleField()
     seedSlot = self:int_GetNextValidSeedSlot()
     if (seedSlot == -1) then
-        return false
+        if(self.bool_walkWithoutSeeds)then
+            return true
+        else
+            return false
+        end
     end
 
     selectedSlot = turtle.getSelectedSlot()

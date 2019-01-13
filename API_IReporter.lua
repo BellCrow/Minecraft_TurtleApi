@@ -2,7 +2,7 @@
 --if you want to use a self made class as a reporter in the api,
 --then the class must at least implement functions with the prototypes:
 --if your calss implements this interface mark it with:
--- IActionReporter
+-- IReporter
 
 
 
