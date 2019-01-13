@@ -8,7 +8,8 @@ function FarmHandler:new(
     int_farmWidth,
     int_farmHeight,
     table_seedSlots,
-    bool_walkWithoutSeeds)
+    bool_walkWithoutSeeds,
+    bool_startRightSideOfField)
     instance = {}
     instance.obj_turtleMoveApi = obj_turtleMoveApi
     instance.table_moveToFarmList = table_moveToFarmList
@@ -16,7 +17,8 @@ function FarmHandler:new(
     instance.int_farmWidth = int_farmWidth
     instance.int_farmHeight = int_farmHeight
     instance.table_seedSlots = table_seedSlots
-    instance.bool_walkWithoutSeeds = bool_walkWithoutSeeds
+    instance.bool_walkWithoutSeeds = bool_walkWithoutSeeds or false
+    instance.bool_startRightSideOfField = bool_startRightSideOfField or false
     setmetatable(instance, FarmHandler)
     return instance
 end
@@ -42,7 +44,7 @@ function FarmHandler:int_GetMoveCostsForRun()
     --+ 1 to get from the field back in to the start position
     return neededRange + 1
 end
---test
+
 function FarmHandler:bool_HasEnoughFuelForRun()
     maxRange = self.obj_turtleMoveApi:int_getMoveRange()
     return maxRange >= self:int_GetMoveCostsForRun()
@@ -100,7 +102,7 @@ function FarmHandler:bool_FarmSingleColumn()
 end
 
 function FarmHandler:bool_FarmField()
-    bool_turnRight = true
+    bool_turnRight = not self.bool_startRightSideOfField
     --just to move onto the field
     self.obj_turtleMoveApi:bool_MoveUp(1)
     self.obj_turtleMoveApi:bool_MoveForward(1,MoveFunction,self)
@@ -128,10 +130,22 @@ function FarmHandler:bool_FarmField()
         self.obj_turtleMoveApi:bool_TurnRight(2,nil)
         self.obj_turtleMoveApi:bool_MoveForward(self.int_farmHeight - 1)
     end
-    self.obj_turtleMoveApi:bool_TurnRight(1,nil)
+
+    if(self.bool_startRightSideOfField)then
+        self.obj_turtleMoveApi:bool_TurnLeft(1,nil)
+    else
+        self.obj_turtleMoveApi:bool_TurnRight(1,nil)
+    end
+    
     self.obj_turtleMoveApi:bool_MoveForward(self.int_farmWidth - 1)
 
-    self.obj_turtleMoveApi:bool_TurnLeft(1,nil)
+    
+    if(self.bool_startRightSideOfField)then
+        self.obj_turtleMoveApi:bool_TurnRight(1,nil)
+    else
+        self.obj_turtleMoveApi:bool_TurnLeft(1,nil)
+    end
+
     self.obj_turtleMoveApi:bool_MoveForward(1)
     self.obj_turtleMoveApi:bool_TurnLeft(2,nil)
     self.obj_turtleMoveApi:bool_MoveDown(1,nil)
@@ -156,13 +170,16 @@ function FarmHandler:bool_FarmSingleField()
     turtle.select(seedSlot)
     for i=0,4 do
         placeSeedSucces = true
-        opResult = turtle.digDown()
-        placeSeedSucces = placeSeedSucces and opResult
+
         opResult = turtle.placeDown()
         placeSeedSucces = placeSeedSucces and opResult
         if(placeSeedSucces)then
             break
         end
+        
+        opResult = turtle.digDown()
+        placeSeedSucces = placeSeedSucces and opResult
+        
     end
     
     turtle.select(selectedSlot)
