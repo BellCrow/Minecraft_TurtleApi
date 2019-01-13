@@ -1,4 +1,3 @@
-os.loadAPI("fuelApi.lua")
 
 --[[
     the movement requests must be made up from commands from the legalMovementList

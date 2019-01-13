@@ -7,7 +7,8 @@ function FarmHandler:new(
     table_moveFromFarmList,
     int_farmWidth,
     int_farmHeight,
-    table_seedSlots)
+    table_seedSlots,
+    bool_walkWithoutSeeds)
     instance = {}
     instance.obj_turtleMoveApi = obj_turtleMoveApi
     instance.table_moveToFarmList = table_moveToFarmList
@@ -15,6 +16,7 @@ function FarmHandler:new(
     instance.int_farmWidth = int_farmWidth
     instance.int_farmHeight = int_farmHeight
     instance.table_seedSlots = table_seedSlots
+    instance.bool_walkWithoutSeeds = bool_walkWithoutSeeds
     setmetatable(instance, FarmHandler)
     return instance
 end
@@ -40,7 +42,7 @@ function FarmHandler:int_GetMoveCostsForRun()
     --+ 1 to get from the field back in to the start position
     return neededRange + 1
 end
-
+--test
 function FarmHandler:bool_HasEnoughFuelForRun()
     maxRange = self.obj_turtleMoveApi:int_getMoveRange()
     return maxRange >= self:int_GetMoveCostsForRun()
@@ -51,7 +53,7 @@ function FarmHandler:bool_DoRun()
         print("Error: Not enough fuel to farm")
         return false
     end
-    if(not self:bool_HasEnoughSeedlings())then
+    if(not self.bool_walkWithoutSeeds and not self:bool_HasEnoughSeedlings())then
         print("Error: Not enough seedlings to farm")
         return false;
     end
