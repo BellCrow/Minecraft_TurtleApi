@@ -44,5 +44,5 @@ You can usually find the computercraft folder with the folders of your computers
  
  2. Make the Api available inside of the virtual computers, in which you want to use it.
     - You can either copy the api folder from the local repo to the local computer folder
-    - 
+    
     - or you can copy the  **createhardLinks.py** script from the repo into your computerfolder, after changing the api path in the script, and execute it in your computer folder to create links to the api, that will thus update the api on  the computer if you make changes to it in your local repo.
