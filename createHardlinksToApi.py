@@ -10,6 +10,7 @@ def is_admin():
         return False
 
 def appMain():
+    #you have to here fill in the path to your local repo here, where your api folder is
     apiFolder = "E:\computerCraftCode\Minecraft_TurtleApi\Api"
     cwd = os.path.dirname(__file__)
     targetApi = os.path.join(os.getcwd(),"Api")
