@@ -9,19 +9,15 @@ def is_admin():
     except:
         return False
 
+def appMain():
+    apiFolder = "E:\computerCraftCode\Minecraft_TurtleApi\Api"
+    cwd = os.path.dirname(__file__)
+    targetApi = os.path.join(os.getcwd(),"Api")
+    os.symlink(apiFolder,targetApi)
+
 if is_admin():
-    apiFolder = "E:\computerCraftCode\Minecraft_TurtleApi"
-
-    apiIdentifierString = "API_"
-
-    for fileName in os.listdir(apiFolder):
-        if(fileName.startswith(apiIdentifierString)):
-            sourceFilePath = os.path.join(apiFolder,fileName)
-            targetFilePath = os.path.join(os.getcwd(),fileName)
-            if os.path.islink(targetFilePath):
-                os.unlink(targetFilePath)
-                
-            os.symlink(sourceFilePath,targetFilePath)
+    appMain()
 else:
     # Re-run the program with admin rights
     ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, __file__, None, 1)
+

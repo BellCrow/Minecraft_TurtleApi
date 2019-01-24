@@ -1,3 +1,6 @@
+os.loadAPI("\\Api\\Reporting\\IReporter.lua")
+os.loadAPI("\\Api\\Reporting\\NullReporter.lua")
+
 FarmHandler = {}
 FarmHandler.__index = FarmHandler
 
@@ -50,34 +53,36 @@ function FarmHandler:bool_HasEnoughFuelForRun()
     return maxRange >= self:int_GetMoveCostsForRun()
 end
 
-function FarmHandler:bool_DoRun()
+function FarmHandler:bool_DoRun(IReporter_reporterArg)
+    --make sure, we have any reporter to use during farm run
+    self.IReporter_reporter = IReporter_reporterArg or API_NullReporter.NullReporter.New()
+
     if (not self:bool_HasEnoughFuelForRun()) then
-        print("Error: Not enough fuel to farm")
+        self.IReporter_reporter:ReportError("Error: Not enough fuel to farm")
         return false
     end
     if(not self.bool_walkWithoutSeeds and not self:bool_HasEnoughSeedlings())then
-        print("Error: Not enough seedlings to farm")
+        self.IReporter_reporter:ReportError("Error: Not enough seedlings to farm")
         return false;
     end
     moveResult = self.obj_turtleMoveApi:int_ExecuteMoveTable(self.table_moveToFarmList)
     if moveResult ~= 0 then
-        print("Move to farm failed:")
-        print(self.obj_turtleMoveApi:ConvertExecuteMovelistReturnCodeToString(moveResult))
+        self.IReporter_reporter:ReportError("Move to farm failed:" .. self.obj_turtleMoveApi:ConvertExecuteMovelistReturnCodeToString(moveResult))
         return false
     end
     --we assume, now that we are in front the farm and the
     --next forward step will move us onto the first field of the field
     if(not self:bool_FarmField()) then
-        print("Error working the field")
         return false
     end
 
     moveResult = self.obj_turtleMoveApi:int_ExecuteMoveTable(self.table_moveFromFarmList)
     if moveResult ~= 0 then
-        print("Move from farm failed:")
-        print(self.obj_turtleMoveApi:ConvertExecuteMovelistReturnCodeToString(moveResult))
+        self.IReporter_reporter:ReportError("Move from farm failed:" .. self.obj_turtleMoveApi:ConvertExecuteMovelistReturnCodeToString(moveResult))
         return false
     end
+
+    self.IReporter_reporter:ReportInfo("Field worked successfully")
     return true
 end
 
@@ -109,16 +114,19 @@ function FarmHandler:bool_FarmField()
 
     for i = 0, self.int_farmWidth - 1 do
         if (not  self:bool_FarmSingleColumn()) then
+            self.IReporter_reporter:ReportError("Error while farming column " .. i)
             return false
         end
         --transition to the next column
         if (i < self.int_farmWidth - 1) then
             if (bool_turnRight) then
                 if (not self:bool_RightColumnTransistion()) then
+                    self.IReporter_reporter:ReportError("Error transitioning from column " .. i .. "->".. i+1)
                     return false
                 end
             else
                 if (not self:bool_LeftColumnTransistion()) then
+                    self.IReporter_reporter:ReportError("Error transitioning from column " .. i .. "->".. i+1)
                     return false
                 end
             end
@@ -158,6 +166,15 @@ function MoveFunction(obj_farmApiInstance)
 end
 
 function FarmHandler:bool_FarmSingleField()
+
+    inspectResult,inspectTable = turtle.inspectDown()
+
+    --TODO: add all possible farming plants for checking on maturity
+    if(inspectResult and inspectTable.state ~= nil and inspectTable.state.age < 7)then
+        return true
+    end
+
+    --if there is no plant below us, we can try to farm if theres is dirt and set a seed
     seedSlot = self:int_GetNextValidSeedSlot()
     if (seedSlot == -1) then
         if(self.bool_walkWithoutSeeds)then

@@ -4,7 +4,7 @@ ConsoleReporter.__index = ConsoleReporter
 
 function ConsoleReporter:New()
     instance = {}
-    setemetatable(instance, ConsoleReporter)
+    setmetatable(instance, ConsoleReporter)
 end
 
 function ConsoleReporter:bool_Init()

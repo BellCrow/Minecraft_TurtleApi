@@ -8,6 +8,9 @@ local maxSlotNumber = 16
 local fuelNameEnergyMapping = { ["minecraft:coal"] = 80}
 
 --public api
+
+---creates a new instance of the fuelhandler
+--@param fuelSlotsArg a talbe with numbers representing the slots to llok in for fuelitems
 function FuelHandler:new(fuelSlotsArg)
     if(fuelSlotsArg == nil) then
         error("supplied null as fuelslots argument")
@@ -88,7 +91,7 @@ function b_isLegalFuelItem(str_fuelItemName)
     return false
 end
 
-function int_getMovementCountForFuelItem(str_fuelItemName,int_fuelItemCount)
+function int_getMovementCountForFuelItem(str_fuelItemName)
     if(not b_isLegalFuelItem(str_fuelItemName)) then
         return math.nan
     end
