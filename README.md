@@ -33,3 +33,16 @@ So far implemented:
    - determine the size of the farm by supplieng its dimension and the turtle will act accordingly
   
    - a post movement action, to move from the field after farming to another location
+
+# Getting started
+You can usually find the computercraft folder with the folders of your computers under 
+**%appdata%/.minecraft/saves/[YourWorldnNameHere]/computers/[NumberOfAComputer]**
+**I highly advise to use the setlabel command on your computers, to make them persisnte even after destroying them again**
+
+>If you dont find your computer there, its probably because you did not create a file on the computer and saved it. Computercraft will only create a folder for a turtle/computer if you have at least one saved file on the computer.
+ 1. Clone the repo to a local folder
+ 
+ 2. Make the Api available inside of the virtual computers, in which you want to use it.
+    - You can either copy the api folder from the local repo to the local computer folder
+    - 
+    - or you can copy the  **createhardLinks.py** script from the repo into your computerfolder, after changing the api path in the script, and execute it in your computer folder to create links to the api, that will thus update the api on  the computer if you make changes to it in your local repo.
