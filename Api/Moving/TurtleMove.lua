@@ -48,7 +48,8 @@ end
 1 not enough fuel for move found in turtle/turtleInventory-> move was not attempted
 2 move was blocked by entitie blocked
 3 move list is corrupt
-]] function MoveHandler:int_ExecuteMoveTable(
+]]
+function MoveHandler:int_ExecuteMoveTable(
     table_moveList)
     if (not self:bool_CheckMoveListLegal(table_moveList)) then
         return 3
