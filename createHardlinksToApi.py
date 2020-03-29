@@ -11,7 +11,7 @@ def is_admin():
 
 def appMain():
     #you have to here fill in the path to your local repo here, where your api folder is
-    apiFolder = "E:\computerCraftCode\Minecraft_TurtleApi\Api"
+    apiFolder = "C:\dev\private\repos\Minecraft_TurtleApi\Api"
     cwd = os.path.dirname(__file__)
     targetApi = os.path.join(os.getcwd(),"Api")
     os.symlink(apiFolder,targetApi)
