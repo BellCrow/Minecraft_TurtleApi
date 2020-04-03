@@ -1,12 +1,14 @@
 os.loadAPI("\\Api\\MekanismReactor\\LaserController.lua")
+os.loadAPI("\\Api\\Communication\\MessageCommunicator.lua")
 
-obj_controller = LaserController.LaserController:new(
-    "up",
-    "bottom",
+local obj_com = MessageCommunicator.MessageCommunicator:new("right")
+local obj_controller = LaserController.LaserController:new(
+    "top",
+    "left",
     "bottom",
     0,
-    "right",
+    obj_com,
     true
 )
 
-obj_controller:void_RednetLoop()
+obj_controller:RednetLoop()
