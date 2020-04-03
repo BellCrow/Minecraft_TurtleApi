@@ -1,0 +1,56 @@
+{
+	// Place your snippets for lua here. Each snippet is defined under a snippet name and has a prefix, body and 
+	// description. The prefix is what is used to trigger the snippet and the body will be expanded and inserted. Possible variables are:
+	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. Placeholders with the 
+	// same ids are connected.
+	// Example:
+	// "Print to console": {
+	// 	"prefix": "log",
+	// 	"body": [
+	// 		"console.log('$1');",
+	// 		"$2"
+	// 	],
+	// 	"description": "Log output to console"
+	// }
+	"class": {
+		"prefix": "class",
+		"body": [
+			"local ${1:class name} = {}",
+			"$1.__index = $1",
+			"function $1:new()",
+			"\tlocal instance = {}",
+			"\tsetmetatable(instance, $1)",
+			"\t--set fields like this",
+			"\t--instance.int_value = int_argument",
+			"\treturn instance",
+			"end"
+		],
+		"description": "Basic lua class"
+	},
+	"nullcheck": {
+		"prefix": "nc",
+		"body": [
+			"if($1 == nil) then",
+			"\terror(\"$1\" .. \"value cannot be nil\",2)",
+			"end"
+			
+		],
+		"description": "Null check for variables"
+	},
+	"method": {
+		"prefix": "method",
+		"body": [
+
+			"function ${1:class name}:${2:method name}()",
+			"\t--access fields/properties like:",
+			"\t--self.fieldName",
+			"\t--call methods like:",
+			"\t--self:methodName",
+			"end",
+		
+			
+		],
+		"description": "Construct for class methods"
+	},
+
+}
