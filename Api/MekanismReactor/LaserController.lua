@@ -29,18 +29,29 @@
             int_maxEnergy,--the maximum amount of loaded charge in the laser amplifier (unit unknown (?))
         }
     }
+
     Send:
     {
-        MessageType : "Mes_QueryStatus",
+        --request the server to activate the supply of energy to the laser and thus start loading the amplifier
+        MessageType : "Mes_StartLoading",
         Data: [ignored]
     }
     Receive:
     {
-        MessageType : "Mes_QueryStatus",
-        Data:{
-            int_loadedEnergy, --the currently amount of loaded charge in the laser amplifier (unit unknown (?))
-            int_maxEnergy,--the maximum amount of loaded charge in the laser amplifier (unit unknown (?))
-        }
+        MessageType : "Mes_StartLoading",
+        Data:bool depicting if the action was successful
+    }
+    
+    Send:
+    {
+        --request the server to deactivate the supply of energy to the laser and thus stop loading the amplifier
+        MessageType : "Mes_StopLoading",
+        Data: [ignored]
+    }
+    Receive:
+    {
+        MessageType : "Mes_StopLoading",
+        Data:bool depicting if the action was successful
     }
 ]]
 
