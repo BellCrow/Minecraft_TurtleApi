@@ -22,10 +22,6 @@ function ReactorController:new(obj_messageCommunicator, str_reactorControlSide)
 end
 
 function ReactorController:RednetLoop()
-    --access fields/properties like:
-    --self.fieldName
-    --call methods like:
-    --self:methodName
 
     while(true)do
         self:ReceiveAndDispatchRednetMessage()
@@ -33,9 +29,24 @@ function ReactorController:RednetLoop()
 end
 
 function ReactorController:ReceiveAndDispatchRednetMessage()
-    --access fields/properties like:
-    --self.fieldName
-    --call methods like:
-    --self:methodName
-    local int_senderId, table_message = self.obj_messageCommunicator:int_table_ReceiveMessage(str_LaserControllerProtocolName)
+    local int_senderId, table_message
+    = self.obj_messageCommunicator:int_table_ReceiveMessage(str_ReactorControllerProtocolName)
+
+    if(table_message.MessageType == nil) then
+        self:SendMalformedMessageError(int_senderId)
+    else
+        self:HandleMessage(table_message,int_senderId)
+    end
+
+end
+
+function ReactorController:HandleMessage(table_message,int_senderId)
+    if(table_message.MessageType == str_MesQueryStatusType) then
+    end
+end
+
+function ReactorController:SendMalformedMessageError(int_receiverId)
+    local table_malformedMessageError = {}
+    table_malformedMessageError.MessageType = "MalformedMessage"
+    self:SendMessage(int_receiverId, table_malformedMessageError)
 end
