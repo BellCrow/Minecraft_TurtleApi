@@ -163,6 +163,7 @@ end
 
 function LaserController:FireLaser()
     redstone.setOutput(self.str_laserAmplifierRedstoneSide,true)
+    --the laser amplifier should have emptied out all the power after 2 seconds
     os.sleep(2)
     redstone.setOutput(self.str_laserAmplifierRedstoneSide,false)
 end
