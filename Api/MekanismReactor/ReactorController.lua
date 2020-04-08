@@ -20,12 +20,11 @@ function ReactorController:new(obj_messageCommunicator, str_reactorControlSide)
     --set fields like this
     --instance.int_value = int_argument
     instance.obj_messageCommunicator = obj_messageCommunicator
-    instance.str_reactorControlSide = str_reactorControlSide
+    instance.obj_reactorWrap =peripheral.wrap(str_reactorControlSide)
     return instance
 end
 
 function ReactorController:RednetLoop()
-
     while(true)do
         self:ReceiveAndDispatchRednetMessage()
     end
@@ -51,20 +50,16 @@ function ReactorController:HandleMessage(table_message,int_senderId)
         table_returnMessage.Data = table_result
         self.obj_messageCommunicator.SendMessage(int_senderId,table_returnMessage,str_ReactorControllerProtocolName)
     elseif table_message.MessageType == str_MesSetInjectionRate then
-        if table_message.Data == nil or type(table_message.Data) ~= "number" then
-
-            --TODO send malformed message with info string, what is wrong
-        else
-            local table_returnMessage = {}
-            table_returnMessage = str_MesSetInjectionRate
-            self:SetInjectionRate()
-        end
-        
+        local table_returnMessage = {}
+        table_returnMessage.MessageType = str_MesSetInjectionRate
+        self:SetInjectionRate(table_returnMessage.Data)
     end
 end
 
 function ReactorController:table_QueryStatus()
-    --TODO: Create the Status table and return it
+    local result = {}
+    result.plasmaHeat = self.obj_reactorWrap.getPlasmaHeat
+    result.
 end
 
 function ReactorController:SendMalformedMessageError(int_receiverId)

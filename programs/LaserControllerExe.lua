@@ -1,7 +1,7 @@
 os.loadAPI("\\Api\\MekanismReactor\\LaserController.lua")
 os.loadAPI("\\Api\\Communication\\MessageCommunicator.lua")
 
-local obj_com = MessageCommunicator.MessageCommunicator:new("right")
+local obj_com = MessageCommunicator.MessageCommunicator:new("back")
 local obj_controller = LaserController.LaserController:new(
     "top",
     "left",

@@ -73,23 +73,25 @@ function LaserController:new(
     bool_debugMode)
 
     if(str_loaderControlRedstoneSide == nil) then
-        error("str_loaderControlRedstoneSide " .. "value cannot be nil",2)
+        error("str_loaderControlRedstoneSide " .. " value cannot be nil",2)
     end
     if(str_laserAmplifierRedstoneSide == nil) then
-        error("str_laserAmplifierRedstoneSide " .. "value cannot be nil",2)
+        error("str_laserAmplifierRedstoneSide " .. " value cannot be nil",2)
     end
     if(str_laserAmplifierQuerySide == nil) then
-        error("str_laserAmplifierQuerySide " .. "value cannot be nil",2)
+        error("str_laserAmplifierQuerySide " .. " value cannot be nil",2)
     end
     if(str_laserAmplifierQuerySide == nil) then
-        error("str_laserAmplifierQuerySide " .. "value cannot be nil",2)
+        error("str_laserAmplifierQuerySide " .. " value cannot be nil",2)
     end
     if(float_percentFireThreshold == nil) then
-        error("float_percentFireThreshold " .. "value cannot be nil",2)
+        error("float_percentFireThreshold " .. " value cannot be nil",2)
     end
     if(obj_messageCommunicator == nil) then
-        error("obj_messageCommunicator " .. "value cannot be nil",2)
+        error("obj_messageCommunicator " .. " value cannot be nil",2)
     end
+
+    obj_messageCommunicator:SetProtocolName(str_LaserControllerProtocolName)
 
     local instance = {}
     setmetatable(instance, LaserController)
@@ -116,48 +118,29 @@ function LaserController:ReceiveAndDispatchRednetMessage()
         print("Waiting for message...")
     end
 
-    local int_senderId, table_message = self.obj_messageCommunicator:int_table_ReceiveMessage(str_LaserControllerProtocolName)
+    local int_senderId, table_message = self.obj_messageCommunicator:int_table_ReceiveMessage()
 
     if(self.bool_debugMode)then 
         print("Recv. message from " .. int_senderId .. " Type: ".. table_message.MessageType)
     end
-
-    if(table_message.MessageType == nil) then
-        self:SendMalformedMessageError(int_senderId)
-    else
-        self:HandleMessage(table_message,int_senderId)
-    end
+    self:HandleMessage(table_message,int_senderId)
 end
 
 function LaserController:HandleMessage(table_parsedLaserCommand, int_receiverId)
     if(table_parsedLaserCommand.MessageType == str_MesQueryStatusType) then
-        local table_result = {}
-        table_result.MessageType = str_MesQueryStatusType
-        table_result.Data = {}
         local table_laserStatusData = self:table_GetLaserStats()
-        table_result.Data.int_loadedEnergy = table_laserStatusData.int_loadedEnergy
-        table_result.Data.int_maxEnergy = table_laserStatusData.int_maxEnergy
-        self:SendMessage(int_receiverId, table_result)
-    elseif (table_parsedLaserCommand.MessageType == str_MesRequestFireType) then 
-        local table_result = {}
-        table_result.MessageType = table_parsedLaserCommand.MessageType
-        table_result.Data = true
+        self:SendMessage(int_receiverId,str_MesQueryStatusType, table_laserStatusData)
+    elseif (table_parsedLaserCommand.MessageType == str_MesRequestFireType) then
         self:FireLaser()
-        self:SendMessage(int_receiverId, table_result)
+        self:SendMessage(int_receiverId,str_MesRequestFireType, true)
     elseif (table_parsedLaserCommand.MessageType == str_MesStartLoadingType) then
         self:StartLoading()
-        local table_result = {}
-        table_result.MessageType = str_MesStartLoadingType
-        table_result.Data = true
-        self:SendMessage(int_receiverId,table_result)
+        self:SendMessage(int_receiverId,str_MesStartLoadingType,true)
     elseif (table_parsedLaserCommand.MessageType == str_MesStopLoadingType) then
         self:StopLoading()
-        local table_result = {}
-        table_result.MessageType = str_MesStopLoadingType
-        table_result.Data = true
-        self:SendMessage(int_receiverId,table_result)
+        self:SendMessage(int_receiverId,str_MesStopLoadingType,true)
     else
-        self:SendMalformedMessageError(int_receiverId)
+        self.obj_messageCommunicator:SendMalformedMessageError(int_receiverId,"Unknown message id " .. tostring(table_parsedLaserCommand.MessageType))
     end
 end
 
@@ -168,17 +151,11 @@ function LaserController:FireLaser()
     redstone.setOutput(self.str_laserAmplifierRedstoneSide,false)
 end
 
-function LaserController:SendMessage(int_receiverId, table_message)
+function LaserController:SendMessage(int_receiverId,str_messageType, payload)
     if(self.bool_debugMode)then
-        print("Sending message to ".. int_receiverId .. " Type: " .. table_message.MessageType)
+        print("Sending message to ".. int_receiverId .. " Type: " .. str_messageType)
     end
-    self.obj_messageCommunicator:SendMessage(int_receiverId,table_message,str_LaserControllerProtocolName)
-end
-
-function LaserController:SendMalformedMessageError(int_receiverId)
-    local table_malformedMessageError = {}
-    table_malformedMessageError.MessageType = "MalformedMessage"
-    self:SendMessage(int_receiverId, table_malformedMessageError)
+    self.obj_messageCommunicator:SendMessage(int_receiverId,str_messageType,payload)
 end
 
 function LaserController:table_GetLaserStats()
