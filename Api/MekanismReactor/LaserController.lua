@@ -18,20 +18,6 @@
 
     Send:
     {
-        MessageType : "Mes_QueryStatus",
-        Data: [ignored]
-    }
-    Receive:
-    {
-        MessageType : "Mes_QueryStatus",
-        Data:{
-            int_loadedEnergy, --the currently amount of loaded charge in the laser amplifier (unit unknown (?))
-            int_maxEnergy,--the maximum amount of loaded charge in the laser amplifier (unit unknown (?))
-        }
-    }
-
-    Send:
-    {
         --request the server to activate the supply of energy to the laser and thus start loading the amplifier
         MessageType : "Mes_StartLoading",
         Data: [ignored]
@@ -138,7 +124,7 @@ function LaserController:HandleMessage(table_parsedLaserCommand, int_receiverId)
         self:SendMessage(int_receiverId,str_MesStartLoadingType,true)
     elseif (table_parsedLaserCommand.MessageType == str_MesStopLoadingType) then
         self:StopLoading()
-        self:SendMessage(int_receiverId,str_MesStopLoadingType,true)
+        self:SendMessage(int_receiverId,str_MesStopLoadingType,true) 
     else
         self.obj_messageCommunicator:SendMalformedMessageError(int_receiverId,"Unknown message id " .. tostring(table_parsedLaserCommand.MessageType))
     end
@@ -158,6 +144,20 @@ function LaserController:SendMessage(int_receiverId,str_messageType, payload)
     self.obj_messageCommunicator:SendMessage(int_receiverId,str_messageType,payload)
 end
 
+
+-- Send:
+--     {
+--         MessageType : "Mes_QueryStatus",
+--         Data: [ignored]
+--     }
+--     Receive:
+--     {
+--         MessageType : "Mes_QueryStatus",
+--         Data:{
+--             int_loadedEnergy, --the currently amount of loaded charge in the laser amplifier (unit unknown (?))
+--             int_maxEnergy,--the maximum amount of loaded charge in the laser amplifier (unit unknown (?))
+--         }
+--     }
 function LaserController:table_GetLaserStats()
     local int_loadedEnergy = self.obj_laserAmplifierWrap.getEnergy()
     local int_maxEnergy = self.obj_laserAmplifierWrap.getMaxEnergy()

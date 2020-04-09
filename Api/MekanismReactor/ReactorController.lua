@@ -33,33 +33,30 @@ end
 function ReactorController:ReceiveAndDispatchRednetMessage()
     local int_senderId, table_message
     = self.obj_messageCommunicator:int_table_ReceiveMessage(str_ReactorControllerProtocolName)
-
-    if(table_message.MessageType == nil) then
-        self:SendMalformedMessageError(int_senderId)
-    else
-        self:HandleMessage(table_message,int_senderId)
-    end
-
+    self:HandleMessage(table_message,int_senderId)
 end
 
 function ReactorController:HandleMessage(table_message,int_senderId)
     if(table_message.MessageType == str_MesQueryStatusType) then
-        local table_result = self:table_QueryStatus();
-        local table_returnMessage = {}
-        table_returnMessage.MessageType = str_MesQueryStatusType
-        table_returnMessage.Data = table_result
-        self.obj_messageCommunicator.SendMessage(int_senderId,table_returnMessage,str_ReactorControllerProtocolName)
+        local table_reactorStatus = self:table_QueryStatus();
+        self.obj_messageCommunicator.SendMessage(int_senderId,str_MesQueryStatusType,table_reactorStatus)
     elseif table_message.MessageType == str_MesSetInjectionRate then
-        local table_returnMessage = {}
-        table_returnMessage.MessageType = str_MesSetInjectionRate
-        self:SetInjectionRate(table_returnMessage.Data)
+        self.obj_messageCommunicator.SendMessage(int_senderId,str_MesSetInjectionRate,true)
+        self:SetInjectionRate(table_message.Payload)
     end
+end
+
+function ReactorController:Ignite()
+    self.obj_reactorWrap.
 end
 
 function ReactorController:table_QueryStatus()
     local result = {}
-    result.plasmaHeat = self.obj_reactorWrap.getPlasmaHeat
-    result.
+    result.plasmaHeat = self.obj_reactorWrap.getPlasmaHeat()
+    result.injectionRate = self.obj_reactorWrap.getInjectionRate()
+    result.isIgnited = self.obj_reactorWrap.isIgnited()
+    result.canIgnite = self.obj_reactorWrap.canIgnite()
+    result.producingAmount = self.obj_reactorWrap.getProducing()
 end
 
 function ReactorController:SendMalformedMessageError(int_receiverId)
