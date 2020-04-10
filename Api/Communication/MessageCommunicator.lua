@@ -3,7 +3,7 @@ MessageCommunicator.__index = MessageCommunicator
 
 local MalformedMessageType = "Mes_MalformedMessage"
 
-local debug = false
+local debug = true
 
 function MessageCommunicator:new(str_rednetModemSide, str_protocolName)
     if(str_rednetModemSide == nil) then
@@ -25,22 +25,25 @@ function MessageCommunicator:SetProtocolName(str_protocolName)
 end
 
 function MessageCommunicator:SendMessage(int_receiverId, str_messageType,table_payload)
-    --access fields/properties like:
-    --self.fieldName
-    --call methods like:
-    --self:methodName
     if(int_receiverId == nil) then
         error("int_receiverId" .. " value cannot be nil",2)
     end
     if(str_messageType == nil) then
         error("str_messageType" .. " value cannot be nil",2)
     end
+    if(type(int_receiverId) ~= "number") then
+        error("Parameter int_receiverId must be number but is a " .. type(int_receiverId),2)
+    end
+    if(type(str_messageType) ~= "string") then
+        error("Parameter str_messageType must be string but is a " .. type(str_messageType),2)
+    end
+    
     local message = {}
     message.MessageType = str_messageType
     message.Payload = table_payload
     local str_serializedMessage = textutils.serialize(message)
     if debug then
-        print(self.str_protocolName)
+        print("Sending message to " .. int_receiverId .. " with protocol " .. self.str_protocolName)
     end
     rednet.send(int_receiverId, str_serializedMessage, self.str_protocolName)
 end

@@ -73,3 +73,9 @@ function ReactorController:SendMalformedMessageError(int_receiverId)
     table_malformedMessageError.MessageType = "MalformedMessage"
     self:SendMessage(int_receiverId, table_malformedMessageError)
 end
+
+--statics
+
+function str_GetProtocolName()
+    return str_ReactorControllerProtocolName
+end

@@ -77,7 +77,7 @@ function LaserController:new(
         error("obj_messageCommunicator " .. " value cannot be nil",2)
     end
 
-    obj_messageCommunicator:SetProtocolName(str_LaserControllerProtocolName)
+    obj_messageCommunicator:SetProtocolName(str_GetProtocolName())
 
     local instance = {}
     setmetatable(instance, LaserController)
@@ -144,7 +144,6 @@ function LaserController:SendMessage(int_receiverId,str_messageType, payload)
     self.obj_messageCommunicator:SendMessage(int_receiverId,str_messageType,payload)
 end
 
-
 -- Send:
 --     {
 --         MessageType : "Mes_QueryStatus",
@@ -180,4 +179,9 @@ function LaserController:StopLoading()
     end
     redstone.setOutput(self.str_loaderControlRedstoneSide, true)
     self.bool_loading = false
+end
+
+--statics
+function str_GetProtocolName()
+    return str_LaserControllerProtocolName
 end
