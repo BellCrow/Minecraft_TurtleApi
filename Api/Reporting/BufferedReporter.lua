@@ -4,7 +4,7 @@ BufferedReporter.__index = BufferedReporter
 
 ---Creates a new instance of the BufferedReporter
 function BufferedReporter:New()
-    instance = {}
+    local instance = {}
     instance.table_DebugList = {}
     instance.table_WarningList = {}
     instance.table_InfoList = {}

@@ -10,5 +10,4 @@ local obj_controller = LaserController.LaserController:new(
     obj_com,
     true
 )
-
 obj_controller:RednetLoop()

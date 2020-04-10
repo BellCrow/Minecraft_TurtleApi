@@ -8,7 +8,7 @@ NullReporter = {}
 NullReporter.__index = NullReporter
 
 function NullReporter:New()
-    instance = {}
+    local instance = {}
     setmetatable(instance,NullReporter)
     return instance
 end

@@ -1,5 +1,11 @@
 {
     "Lua.diagnostics.globals": [
-        "peripheral"
+        "peripheral",
+        "turtle",
+        "rednet",
+        "textutils",
+        "term",
+        "paintutils",
+        "redstone"
     ]
 }

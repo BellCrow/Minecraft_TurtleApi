@@ -34,8 +34,8 @@ function FuelHandler:bool_refuelOnDemand()
     if(turtle.getFuelLevel() ~= 0) then
         return true
     end
-    selectedSlot = turtle.getSelectedSlot() 
-    nextFuelslot = self:int_getNextFullFuelSlot()
+    local selectedSlot = turtle.getSelectedSlot() 
+    local nextFuelslot = self:int_getNextFullFuelSlot()
     if(nextFuelslot == -1) then
         return false
     end
@@ -46,7 +46,7 @@ function FuelHandler:bool_refuelOnDemand()
 end
 
 function FuelHandler:int_getMoveRange()
-    movementRange = 0
+    local movementRange = 0
     for index,fuelSlot in ipairs(self.fuelSlots) do
         
         --only check fuel level, even if there are any fuel items
