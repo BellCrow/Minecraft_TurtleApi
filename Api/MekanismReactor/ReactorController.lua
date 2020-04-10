@@ -1,4 +1,4 @@
-local ReactorController = {}
+ReactorController = {}
 ReactorController.__index = ReactorController
 
 local str_MesQueryStatusType = "Mes_QueryStatus"
@@ -14,14 +14,18 @@ function ReactorController:new(obj_messageCommunicator, str_reactorControlSide)
     if(str_reactorControlSide == nil) then
         error("str_reactorControlSide" .. "value cannot be nil",2)
     end
-
+    obj_messageCommunicator:SetProtocolName(str_ReactorControllerProtocolName)
     local instance = {}
     setmetatable(instance, ReactorController)
     --set fields like this
     --instance.int_value = int_argument
     instance.obj_messageCommunicator = obj_messageCommunicator
-    instance.obj_reactorWrap =peripheral.wrap(str_reactorControlSide)
+    instance.obj_reactorWrap = peripheral.wrap(str_reactorControlSide)
     return instance
+end
+
+function GetProtocolName()
+    return str_ReactorControllerProtocolName
 end
 
 function ReactorController:RednetLoop()
@@ -31,23 +35,27 @@ function ReactorController:RednetLoop()
 end
 
 function ReactorController:ReceiveAndDispatchRednetMessage()
+    io.write("Waiting for message...")
     local int_senderId, table_message
-    = self.obj_messageCommunicator:int_table_ReceiveMessage(str_ReactorControllerProtocolName)
+    = self.obj_messageCommunicator:int_table_ReceiveMessage()
+    print("message received from " .. tostring(int_senderId))
     self:HandleMessage(table_message,int_senderId)
 end
 
 function ReactorController:HandleMessage(table_message,int_senderId)
     if(table_message.MessageType == str_MesQueryStatusType) then
         local table_reactorStatus = self:table_QueryStatus();
-        self.obj_messageCommunicator.SendMessage(int_senderId,str_MesQueryStatusType,table_reactorStatus)
+        self.obj_messageCommunicator:SendMessage(int_senderId,str_MesQueryStatusType,table_reactorStatus)
     elseif table_message.MessageType == str_MesSetInjectionRate then
-        self.obj_messageCommunicator.SendMessage(int_senderId,str_MesSetInjectionRate,true)
         self:SetInjectionRate(table_message.Payload)
+        self.obj_messageCommunicator:SendMessage(int_senderId,str_MesSetInjectionRate,true)
+    else
+        self.obj_messageCommunicator:SendMalformedMessageError("Unrecognized message type " .. table_message.MessageType .. " in reactor controller")
     end
 end
 
-function ReactorController:Ignite()
-    self.obj_reactorWrap.
+function ReactorController:SetInjectionRate(int_injectionRate)
+    self.obj_reactorWrap.setInjectionRate(int_injectionRate)
 end
 
 function ReactorController:table_QueryStatus()
@@ -57,6 +65,7 @@ function ReactorController:table_QueryStatus()
     result.isIgnited = self.obj_reactorWrap.isIgnited()
     result.canIgnite = self.obj_reactorWrap.canIgnite()
     result.producingAmount = self.obj_reactorWrap.getProducing()
+    return result
 end
 
 function ReactorController:SendMalformedMessageError(int_receiverId)

@@ -3,7 +3,7 @@ MessageCommunicator.__index = MessageCommunicator
 
 local MalformedMessageType = "Mes_MalformedMessage"
 
-local debug = true
+local debug = false
 
 function MessageCommunicator:new(str_rednetModemSide, str_protocolName)
     if(str_rednetModemSide == nil) then

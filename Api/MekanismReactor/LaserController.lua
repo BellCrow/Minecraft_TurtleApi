@@ -154,8 +154,8 @@ end
 --     {
 --         MessageType : "Mes_QueryStatus",
 --         Data:{
---             int_loadedEnergy, --the currently amount of loaded charge in the laser amplifier (unit unknown (?))
---             int_maxEnergy,--the maximum amount of loaded charge in the laser amplifier (unit unknown (?))
+--             int_loadedEnergy, --the currently amount of loaded charge in the laser amplifier (unit unknown best be used as percentage with the max value)
+--             int_maxEnergy,--the maximum amount of loaded charge in the laser amplifier (unit unknown)
 --         }
 --     }
 function LaserController:table_GetLaserStats()
