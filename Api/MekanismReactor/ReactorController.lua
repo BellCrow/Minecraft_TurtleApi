@@ -63,7 +63,8 @@ function ReactorController:table_QueryStatus()
     result.plasmaHeat = self.obj_reactorWrap.getPlasmaHeat()
     result.injectionRate = self.obj_reactorWrap.getInjectionRate()
     result.isIgnited = self.obj_reactorWrap.isIgnited()
-    result.canIgnite = self.obj_reactorWrap.canIgnite()
+    result.tritiumLevel = self.obj_reactorWrap.getTritium()
+    result.deuteriumLevel = self.obj_reactorWrap.getDeuterium()
     result.producingAmount = self.obj_reactorWrap.getProducing()
     return result
 end

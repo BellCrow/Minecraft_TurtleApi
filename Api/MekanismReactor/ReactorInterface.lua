@@ -17,6 +17,7 @@ local str_fuel_MesQueryStatusType = "Mes_QueryStatus"
 
 --interface messages 
 local str_MesQueryStatusType = "Mes_QueryStatus"
+local str_MesIgniteType = "Mes_Ignite"
 
 local str_ReactorInterfaceProtocolName = "ReactorInterfaceProtocol"
 
@@ -88,9 +89,50 @@ function ReactorInterface:HandleMessage(table_message,int_senderId)
     if table_message.MessageType == str_MesQueryStatusType then
         local reactorStatus = self:table_GetReactorStatus()
         self.obj_interfaceCommunicator:SendMessage(int_senderId,str_MesQueryStatusType,reactorStatus)
+    elseif table_message.MessageType == str_MesIgniteType then
+        self.obj_interfaceCommunicator:SendMessage(int_senderId,str_MesIgniteType,self:table_IgniteReactor())
     else
         self.obj_interfaceCommunicator:SendMalformedMessageError(int_senderId,"Unknown message id " .. tostring(table_message.MessageType))
     end
+end
+
+function ReactorInterface:table_IgniteReactor()
+    local result = {}
+    local aggregatedReactorStatus = self:table_GetReactorStatus()
+    local laserStatus = aggregatedReactorStatus.LaserStatus
+    local float_laserLoadFraction = laserStatus.int_loadedEnergy / laserStatus.int_maxEnergy
+    if float_laserLoadFraction <= 0.5 then
+        result.Success = false;
+        result.Reason = "The laser amplifier is currently at" .. float_laserLoadFraction * 100 .. "%. At least 50% is needed"
+        return result
+    end
+    local reactorStatus = aggregatedReactorStatus.ReactorStatus
+    if reactorStatus.injectionRate < 6 then
+        result.Success = false
+        result.Reason = "The fuel injection rate is currently at " .. reactorStatus.injectionRate .. ". At least 6 is needed"
+        return result
+    end
+    if reactorStatus.tritiumLevel <= 980 or reactorStatus.deuteriumLevel <= 980 then
+        result.Success = false
+        result.Reason = "Detected missing fuel supply. Make sure, there is a continues supply of tritium and deuterium to the reactor"
+        return result
+    end
+
+    self.obj_laserCommunicator:SendMessage(self.int_laserControllerId, str_laser_MesRequestFireType)
+    local _, resultMessage = self.obj_laserCommunicator:int_table_ReceiveMessage()
+    if resultMessage.Payload == false then
+        result.Success = false
+        result.Reason = "Unknown error during firing of laser occured"
+        return result
+    end
+end
+
+function int_RoundFloat(float_value, int_numberOfDecimals)
+    int_decimalShiftValue = int_numberOfDecimals * 10
+    float_multipliedNumber = float_value * int_decimalShiftValue
+    intValue = math.floor(float_multipliedNumber)
+    return intValue / int_decimalShiftValue
+
 end
 
 function ReactorInterface:table_GetReactorStatus()

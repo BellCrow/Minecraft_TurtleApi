@@ -26,25 +26,24 @@ function BarGraph:new(int_posX, int_posY, int_width, int_height, color_drawColor
     return instance
 end
 
-function BarGraph:void_Render()
+function BarGraph:Render()
     -- save currentBackgroundColor to restore later as not to destroy context for other draws
     local color_savedBackGroundColor = term.getBackgroundColor()
 
-    self:__void_RenderValueBar()
+    self:_RenderValueBar()
 
     if (self.bool_renderBorder) then
-        self:__void_RenderBorder()
+        self:_RenderBorder()
     end
 
     if (self.bool_renderValue) then
-        self:__void_RenderValue()
+        self:_RenderValue()
     end
 
     term.setBackgroundColor(color_savedBackGroundColor)
 end
 
-function BarGraph:__void_RenderValue()
-    
+function BarGraph:_RenderValue()
     local str_valueString = tostring(self.float_value)
     local int_barMiddleX = math.floor(self.int_posX + self.int_width / 2)
     local int_barMiddleY = math.floor(self.int_posY + self.int_height / 2)
@@ -57,28 +56,28 @@ function BarGraph:__void_RenderValue()
     term.setCursorPos(int_oldCursorPosX, int_oldCursorPosY)
 end
 
-function BarGraph:__void_RenderBorder()
+function BarGraph:_RenderBorder()
     paintutils.drawBox(self.int_posX, self.int_posY, self.int_barEndX, self.int_barEndY, self.color_drawColor)
 end
 
-function BarGraph:__void_RenderValueBar()
+function BarGraph:_RenderValueBar()
     local float_fractionOfBarToFill = self.float_value / self.float_maxValue
     local int_barWidthForCurrentValue = math.floor(self.int_width * float_fractionOfBarToFill)
 
     local int_valueBarEndX = self.int_posX + int_barWidthForCurrentValue
     local int_valueBarEndY = self.int_posY + self.int_height
 
-    paintutils.drawFilledBox(self.int_posX, self.int_posX, int_valueBarEndX, int_valueBarEndY, self.color_drawColor)
+    paintutils.drawFilledBox(self.int_posX, self.int_posY, int_valueBarEndX, int_valueBarEndY, self.color_drawColor)
 end
 
-function BarGraph:void_SetValue(int_value)
+function BarGraph:SetValue(int_value)
     self.float_value = int_value
 end
 
-function BarGraph:void_SetBorderMode(bool_renderBorders)
+function BarGraph:SetBorderMode(bool_renderBorders)
     self.bool_renderBorder = bool_renderBorders
 end
 
-function BarGraph:void_SetShowValue(bool_renderValue)
+function BarGraph:SetShowValue(bool_renderValue)
     self.bool_renderValue = bool_renderValue
 end

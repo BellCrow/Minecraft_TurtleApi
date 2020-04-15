@@ -6,7 +6,8 @@
         "textutils",
         "term",
         "paintutils",
-        "redstone"
+        "redstone",
+        "colors"
     ],
     "Lua.diagnostics.disable": [
         "lowercase-global"
