@@ -46,3 +46,4 @@ You can usually find the computercraft folder with the folders of your computers
     - You can either copy the api folder from the local repo to the local computer folder
     
     - or you can copy the  **createhardLinks.py** script from the repo into your computerfolder, after changing the api path in the script, and execute it in your computer folder to create links to the api, that will thus update the api on  the computer if you make changes to it in your local repo.
+    For the script to function correctly you need to install "pywin32"

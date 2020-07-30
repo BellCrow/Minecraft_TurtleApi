@@ -13,7 +13,7 @@ function FarmHandler:new(
     table_seedSlots,
     bool_walkWithoutSeeds,
     bool_startRightSideOfField)
-    instance = {}
+    local instance = {}
     instance.obj_turtleMoveApi = obj_turtleMoveApi
     instance.table_moveToFarmList = table_moveToFarmList
     instance.table_moveFromFarmList = table_moveFromFarmList
@@ -28,7 +28,7 @@ end
 
 function FarmHandler:int_GetMoveCostsForRun()
     --one to move onto the field after arriving
-    neededRange = 1
+    local neededRange = 1
     neededRange = self.obj_turtleMoveApi:int_CalculateCostOfMoveList(self.table_moveToFarmList)
 
     neededRange = neededRange + self.obj_turtleMoveApi:int_CalculateCostOfMoveList(self.table_moveFromFarmList)
@@ -49,7 +49,7 @@ function FarmHandler:int_GetMoveCostsForRun()
 end
 
 function FarmHandler:bool_HasEnoughFuelForRun()
-    maxRange = self.obj_turtleMoveApi:int_getMoveRange()
+    local maxRange = self.obj_turtleMoveApi:int_getMoveRange()
     return maxRange >= self:int_GetMoveCostsForRun()
 end
 
@@ -65,7 +65,7 @@ function FarmHandler:bool_DoRun(IReporter_reporterArg)
         self.IReporter_reporter:ReportError("Error: Not enough seedlings to farm")
         return false;
     end
-    moveResult = self.obj_turtleMoveApi:int_ExecuteMoveTable(self.table_moveToFarmList)
+    local moveResult = self.obj_turtleMoveApi:int_ExecuteMoveTable(self.table_moveToFarmList)
     if moveResult ~= 0 then
         self.IReporter_reporter:ReportError("Move to farm failed:" .. self.obj_turtleMoveApi:ConvertExecuteMovelistReturnCodeToString(moveResult))
         return false
@@ -91,7 +91,7 @@ function FarmHandler:bool_HasEnoughSeedlings()
 end
 
 function FarmHandler:int_GetSeedlingCount()
-    seedCount = 0
+    local seedCount = 0
     for index,seedSlot in ipairs(self.table_seedSlots) do
         seedCount = seedCount + turtle.getItemCount(seedSlot)
     end
@@ -107,7 +107,7 @@ function FarmHandler:bool_FarmSingleColumn()
 end
 
 function FarmHandler:bool_FarmField()
-    bool_turnRight = not self.bool_startRightSideOfField
+    local bool_turnRight = not self.bool_startRightSideOfField
     --just to move onto the field
     self.obj_turtleMoveApi:bool_MoveUp(1)
     self.obj_turtleMoveApi:bool_MoveForward(1,MoveFunction,self)
@@ -167,7 +167,7 @@ end
 
 function FarmHandler:bool_FarmSingleField()
 
-    inspectResult,inspectTable = turtle.inspectDown()
+    local inspectResult,inspectTable = turtle.inspectDown()
 
     --TODO: add all possible farming plants for checking on maturity
     if(inspectResult and inspectTable.state ~= nil and inspectTable.state.age < 7)then
@@ -175,7 +175,7 @@ function FarmHandler:bool_FarmSingleField()
     end
 
     --if there is no plant below us, we can try to farm if theres is dirt and set a seed
-    seedSlot = self:int_GetNextValidSeedSlot()
+    local seedSlot = self:int_GetNextValidSeedSlot()
     if (seedSlot == -1) then
         if(self.bool_walkWithoutSeeds)then
             return true
@@ -184,15 +184,14 @@ function FarmHandler:bool_FarmSingleField()
         end
     end
 
-    selectedSlot = turtle.getSelectedSlot()
+    local selectedSlot = turtle.getSelectedSlot()
 
     --we try 5 times to place a new seed
     --after that we just assume that all of our struggle would be in vain 
     turtle.select(seedSlot)
+    local placeSeedSucces = true
     for i=0,4 do
-        placeSeedSucces = true
-
-        opResult = turtle.placeDown()
+        local opResult = turtle.placeDown()
         placeSeedSucces = placeSeedSucces and opResult
         if(placeSeedSucces)then
             break

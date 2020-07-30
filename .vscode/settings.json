@@ -1,0 +1,15 @@
+{
+    "Lua.diagnostics.globals": [
+        "peripheral",
+        "turtle",
+        "rednet",
+        "textutils",
+        "term",
+        "paintutils",
+        "redstone",
+        "colors"
+    ],
+    "Lua.diagnostics.disable": [
+        "lowercase-global"
+    ]
+}

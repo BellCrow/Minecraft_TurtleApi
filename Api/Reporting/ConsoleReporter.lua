@@ -3,7 +3,7 @@ ConsoleReporter = {}
 ConsoleReporter.__index = ConsoleReporter
 
 function ConsoleReporter:New()
-    instance = {}
+    local instance = {}
     setmetatable(instance, ConsoleReporter)
 end
 

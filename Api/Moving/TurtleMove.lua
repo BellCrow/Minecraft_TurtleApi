@@ -54,7 +54,7 @@ function MoveHandler:int_ExecuteMoveTable(
     if (not self:bool_CheckMoveListLegal(table_moveList)) then
         return 3
     end
-    maxRange = self.obj_fuelHandlerInstance:int_getMoveRange()
+    local maxRange = self.obj_fuelHandlerInstance:int_getMoveRange()
     if (self:int_CalculateCostOfMoveList(table_moveList) > maxRange) then
         return 1
     end
@@ -101,7 +101,7 @@ function MoveHandler:int_CalculateCostOfMoveList(table_moveList)
         return math.nan
     end
 
-    movementCost = 0
+    local movementCost = 0
 
     for index, moveListEntry in ipairs(table_moveList) do
         for moveSign,moveDistance in pairs(moveListEntry) do
@@ -117,7 +117,7 @@ function MoveHandler:int_getMoveRange()
 end
 
 function MoveHandler:ConvertExecuteMovelistReturnCodeToString(int_returnCode)
-    returnTable = {
+    local returnTable = {
         [0] = "Move was succesfull",
         [1] = "Not enough fuel was found to eceute the movement list. The excecution was not attempted",
         [2] = "The movelist was started to be executed, but at some point an entitie blocked the turtle",
@@ -147,14 +147,14 @@ end
 
 function MoveHandler:bool_StrafeLeft(int_stepCount, func_stepFunction, var_funcArg)
     turtle.turnLeft()
-    success = self:bool_ApplyMoveFunc(int_stepCount, turtle.forward, func_stepFunction,var_funcArg)
+    local success = self:bool_ApplyMoveFunc(int_stepCount, turtle.forward, func_stepFunction,var_funcArg)
     turtle.turnRight()
     return success
 end
 
 function MoveHandler:bool_StrafeRight(int_stepCount, func_stepFunction, var_funcArg)
     turtle.turnRight()
-    success = self:bool_ApplyMoveFunc(int_stepCount, turtle.forward, func_stepFunction,var_funcArg)
+    local success = self:bool_ApplyMoveFunc(int_stepCount, turtle.forward, func_stepFunction,var_funcArg)
     turtle.turnLeft()
 
     return success
@@ -162,12 +162,12 @@ end
 
 function MoveHandler:bool_TurnLeft(int_stepCount, func_stepFunction, var_funcArg)
 
-    success = self:bool_ApplyMoveFunc(int_stepCount, turtle.turnLeft, func_stepFunction,var_funcArg)
+    local success = self:bool_ApplyMoveFunc(int_stepCount, turtle.turnLeft, func_stepFunction,var_funcArg)
     return success
 end
 
 function MoveHandler:bool_TurnRight(int_stepCount, func_stepFunction, var_funcArg)
-    success = self:bool_ApplyMoveFunc(int_stepCount, turtle.turnRight, func_stepFunction,var_funcArg)
+    local success = self:bool_ApplyMoveFunc(int_stepCount, turtle.turnRight, func_stepFunction,var_funcArg)
     return success
 end
 
