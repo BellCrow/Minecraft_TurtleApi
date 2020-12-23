@@ -161,7 +161,6 @@ function MoveHandler:bool_StrafeRight(int_stepCount, func_stepFunction, var_func
 end
 
 function MoveHandler:bool_TurnLeft(int_stepCount, func_stepFunction, var_funcArg)
-
     success = self:bool_ApplyMoveFunc(int_stepCount, turtle.turnLeft, func_stepFunction,var_funcArg)
     return success
 end
